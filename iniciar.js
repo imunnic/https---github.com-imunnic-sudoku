@@ -1,6 +1,6 @@
 let sudoku = generateRandomSudoku();
 verSudoku(sudoku);
-let sudokuGA = new SudokuGA(sudoku);
+ let sudokuGA = new SudokuGA(sudoku);
 // Función para generar un Sudoku completo de forma aleatoria
 function generateRandomSudoku() {
     let sudoku = [];
@@ -12,20 +12,10 @@ function generateRandomSudoku() {
         }
     }
 
-    // Llenar el Sudoku de forma aleatoria
-    fillSudokuRandomly(sudoku);
 
-    // Mostrar solo algunas casillas
-    let cellsToShow = 4;
-    let shownCells = 0;
-    while (shownCells < cellsToShow) {
-        let row = Math.floor(Math.random() * 4);
-        let col = Math.floor(Math.random() * 4);
-        if (sudoku[row][col] !== 0) {
-            sudoku[row][col] = 0;
-            shownCells++;
-        }
-    }
+    fillSudokuRandomly(sudoku);
+    sudoku = multiplicarElementosSimetricos(generarMatrizAleatoria(sudoku),sudoku);
+   
 
     // Actualizar el HTML con el Sudoku generado
     let grid = document.getElementById('sudokuGrid');
@@ -72,7 +62,6 @@ function fillSudokuRandomly(sudoku, row = 0, col = 0) {
             sudoku[row][col] = 0;
         }
     }
-
     // Si no se puede colocar ningún número en la celda actual, retroceder
     return false;
 }
@@ -136,5 +125,73 @@ function verSudoku(sudoku){
 
 function solveGenetic(){
     sudokuGA.run();
-    alert(sudokuGA.executionTime);
 }
+
+function imprimirMatriz(matriz) {
+    for (let i = 0; i < matriz.length; i++) {
+      for (let j = 0; j < matriz[i].length; j++) {
+        console.log(matriz[i][j], end=" "); // Imprime el elemento sin salto de línea
+      }
+      console.log(); // Salto de línea al final de cada fila
+    }
+}
+
+function convertirEnCero(matriz) {
+    // Copiar la matriz original para no modificarla directamente
+    let matrizAux = [...matriz];
+    // Seleccionar 6 elementos aleatorios sin repetición
+    //let indicesAleatorios = generarIndicesAleatoriosSinRepeticion(6, matrizAux.length);
+  
+    // Convertir en 0 los elementos seleccionados
+    for (let indice of indicesAleatorios) {
+      matrizAux[indice] = 0;
+    }
+  
+    return matrizAux;
+  }
+  
+  // Función auxiliar para generar índices aleatorios sin repetición
+  function generarMatrizAleatoria(matrizOriginal) {
+  
+    // Obtener las dimensiones de la matriz original
+    const filas = matrizOriginal.length;
+    const columnas = matrizOriginal[0].length;
+    const probabilidadCero = 0.4;
+  
+    // Crear una matriz vacía para la matriz aleatoria
+    let matrizAleatoria = new Array(filas);
+    for (let i = 0; i < filas; i++) {
+      matrizAleatoria[i] = new Array(columnas);
+    }
+  
+    // Generar valores aleatorios (0 o 1) para cada elemento
+    for (let i = 0; i < filas; i++) {
+      for (let j = 0; j < columnas; j++) {
+        const numeroAleatorio = Math.random();
+        matrizAleatoria[i][j] = numeroAleatorio < probabilidadCero ? 0 : 1;
+      }
+    }
+    
+    return matrizAleatoria;
+  }
+  
+  function multiplicarElementosSimetricos(matrizA, matrizB) {
+    // Obtener las dimensiones de las matrices
+    const filas = matrizA.length;
+    const columnas = matrizA[0].length;
+  
+    // Crear la matriz resultado
+    const matrizResultado = new Array(filas);
+    for (let i = 0; i < filas; i++) {
+      matrizResultado[i] = new Array(columnas);
+    }
+  
+    // Multiplicar elementos simétricos
+    for (let i = 0; i < filas; i++) {
+      for (let j = 0; j < columnas; j++) {
+        matrizResultado[i][j] = matrizA[i][j] * matrizB[i][j];
+      }
+    }
+  
+    return matrizResultado;
+  }
