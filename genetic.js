@@ -31,31 +31,30 @@ class SudokuGA {
         this.poblacion.push(this.obtenerMadre());
     }
 
-    fitness(individual) {
+    //comprueba validez de la solución
+    fitness(solucion) {
         let fitness = 0;
 
-        // Check rows and columns for duplicates (same as original code)
         for (let i = 0; i < 4; i++) {
-            let row = new Set(individual[i]);
+            let row = new Set(solucion[i]);
             fitness += row.size;
         }
 
         for (let j = 0; j < 4; j++) {
             let col = new Set();
             for (let i = 0; i < 4; i++) {
-                col.add(individual[i][j]);
+                col.add(solucion[i][j]);
             }
             fitness += col.size;
         }
 
-        // Check quadrants for duplicates
         const quadrantSize = 2;
         for (let x = 0; x < 4; x += quadrantSize) {
             for (let y = 0; y < 4; y += quadrantSize) {
                 const quadrant = new Set();
                 for (let i = x; i < x + quadrantSize; i++) {
                     for (let j = y; j < y + quadrantSize; j++) {
-                        quadrant.add(individual[i][j]);
+                        quadrant.add(solucion[i][j]);
                     }
                 }
                 fitness += quadrant.size;
@@ -65,16 +64,14 @@ class SudokuGA {
         return fitness;
     }
 
+    //combina padre y madre
     combinarSoluciones(padre, madre) {
 
-        // Crear una nueva matriz combinada de 4x4
         let solucionCombinada = [];
 
-        // Agregar las dos primeras filas de la primera matriz
         solucionCombinada.push([...padre[0]]);
         solucionCombinada.push([...padre[1]]);
 
-        // Agregar las dos primeras filas de la segunda matriz
         solucionCombinada.push([...madre[2]]);
         solucionCombinada.push([...madre[3]]);
 
@@ -82,6 +79,7 @@ class SudokuGA {
         return solucionCombinada;
     }
 
+    //muta una solución a otra distinta y de mejor fitness o devuelve la solucion inicial
     mutarSolucion(solucion) {
         let solucionMutada = solucion.map((row) => [...row]);
         let indiceAleatorio = Math.floor(Math.random() * this.posicionesCeros.length);
@@ -91,7 +89,6 @@ class SudokuGA {
         let valorActual = solucion[fila][columna];
         let valorActual2 = solucion[fila2][columna2];
 
-        // Generar un nuevo valor entre 1 y 4 que sea diferente del valor actual
         let mutacion, mutacion2;
         do {
             mutacion = Math.floor(Math.random() * 4) + 1;
@@ -111,6 +108,7 @@ class SudokuGA {
         }
     }
 
+    //puebla la nueva generación y elimina a los padres
     nuevaGeneracion(solucion) {
         for (let i = 0; i < this.tamanoPoblacion; i++) {
             let nuevaSolucion = solucion.map((row) => [...row]);
@@ -120,6 +118,7 @@ class SudokuGA {
         this.poblacion.pop();
     }
 
+    //evoluciona la solucion
     evolucionar() {
         let generacion = 0;
         do {
@@ -136,6 +135,7 @@ class SudokuGA {
         console.log(`Total de generaciones: ${generacion}`);
     }
 
+    //ejecuta
     run() {
         this.startTimer();
         this.evolucionar();
@@ -143,11 +143,10 @@ class SudokuGA {
         this.stopTimer();
     }
 
+    //obtiene a Adan
     obtenerPadre() {
-        // Clonar el sudoku para no modificar el original
         let sudokuAlterado = this.sudoku.map((row) => [...row]);
 
-        // Reemplazar todos los ceros por unos
         for (let i = 0; i < sudokuAlterado.length; i++) {
             for (let j = 0; j < sudokuAlterado[i].length; j++) {
                 if (sudokuAlterado[i][j] == 0) {
@@ -159,8 +158,8 @@ class SudokuGA {
         return sudokuAlterado;
     }
 
+    //obtiene a Eva
     obtenerMadre() {
-        // Clonar el sudoku para no modificar el original
         let sudokuAlterado = this.sudoku.map((row) => [...row]);
 
         // Reemplazar todos los ceros por unos
@@ -214,10 +213,10 @@ function sonMatricesIguales(matriz1, matriz2) {
         }
     }
 
-    // Si todos los elementos son iguales, las matrices son iguales
     return true;
 }
 
+//Encuentra las posiciones vacías del sudoku
 function encontrarCeros(matriz) {
     let posicionesCeros = [];
     for (let i = 0; i < matriz.length; i++) {
