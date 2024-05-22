@@ -108,23 +108,12 @@ function verSudoku(sudoku){
     }
 
     // Actualizar el HTML con el Sudoku generado
-    let grid = document.getElementById('sudokuGrid');
-    for (let i = 0; i < grid.rows.length; i++) {
-        for (let j = 0; j < grid.rows[i].cells.length; j++) {
-            let input = grid.rows[i].cells[j].getElementsByTagName('input')[0];
-            if (sudoku[i][j] !== 0) {
-                input.value = sudoku[i][j];
-                input.readOnly = true; // Deshabilitar la edición de las casillas mostradas
-            } else {
-                input.value = '';
-                input.readOnly = false; // Habilitar la edición de las casillas ocultas
-            }
-        }
-    }
+    pintarSudoku(sudoku);
 }
 
 function solveGenetic(){
     sudokuGA.run();
+    pintarSudoku(sudokuGA.solucion);
 }
 
 function imprimirMatriz(matriz) {
@@ -135,20 +124,6 @@ function imprimirMatriz(matriz) {
       console.log(); // Salto de línea al final de cada fila
     }
 }
-
-function convertirEnCero(matriz) {
-    // Copiar la matriz original para no modificarla directamente
-    let matrizAux = [...matriz];
-    // Seleccionar 6 elementos aleatorios sin repetición
-    //let indicesAleatorios = generarIndicesAleatoriosSinRepeticion(6, matrizAux.length);
-  
-    // Convertir en 0 los elementos seleccionados
-    for (let indice of indicesAleatorios) {
-      matrizAux[indice] = 0;
-    }
-  
-    return matrizAux;
-  }
   
   // Función auxiliar para generar índices aleatorios sin repetición
   function generarMatrizAleatoria(matrizOriginal) {
@@ -194,4 +169,20 @@ function convertirEnCero(matriz) {
     }
   
     return matrizResultado;
+  }
+
+  function pintarSudoku(sudoku){
+    let grid = document.getElementById('sudokuGrid');
+    for (let i = 0; i < grid.rows.length; i++) {
+        for (let j = 0; j < grid.rows[i].cells.length; j++) {
+            let input = grid.rows[i].cells[j].getElementsByTagName('input')[0];
+            if (sudoku[i][j] !== 0) {
+                input.value = sudoku[i][j];
+                input.readOnly = true; // Deshabilitar la edición de las casillas mostradas
+            } else {
+                input.value = '';
+                input.readOnly = false; // Habilitar la edición de las casillas ocultas
+            }
+        }
+    }
   }

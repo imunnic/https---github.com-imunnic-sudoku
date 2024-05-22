@@ -2,9 +2,9 @@ class SudokuGA {
     constructor(sudoku) {
         this.sudoku = sudoku;
         this.posicionesCeros = encontrarCeros(this.sudoku);
-        this.tamanoPoblacion = 100;
+        this.tamanoPoblacion = 200;
         this.ratioMutacion = 1;
-        this.generaciones = 20;
+        this.generaciones = 30;
         this.poblacion = [];
         this.executionTime = 0;
         this.iniciarPoblacion();
@@ -132,6 +132,9 @@ class SudokuGA {
             console.log(`Generacion: ${generacion}, Mejor fitness: ${this.fitness(this.poblacion[0])}`);
             console.log(this.poblacion[0]);
         } while (this.fitness(this.poblacion[0]) < 48 && generacion < this.generaciones);
+        if (this.fitness(this.poblacion[0]) == 48) {
+            this.solucion = this.poblacion[0];
+        }
         console.log(`Total de generaciones: ${generacion}`);
     }
 
