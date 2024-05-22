@@ -2,9 +2,9 @@ class SudokuGA {
     constructor(sudoku) {
         this.sudoku = sudoku;
         this.posicionesCeros = encontrarCeros(this.sudoku);
-        this.tamanoPoblacion = 200;
+        this.tamanoPoblacion = parseInt(document.getElementById('maxPopulation').value);
         this.ratioMutacion = 1;
-        this.generaciones = 30;
+        this.generaciones = parseInt(document.getElementById('maxGenerations').value);;
         this.poblacion = [];
         this.executionTime = 0;
         this.iniciarPoblacion();
@@ -132,10 +132,17 @@ class SudokuGA {
             console.log(`Generacion: ${generacion}, Mejor fitness: ${this.fitness(this.poblacion[0])}`);
             console.log(this.poblacion[0]);
         } while (this.fitness(this.poblacion[0]) < 48 && generacion < this.generaciones);
-        if (this.fitness(this.poblacion[0]) == 48) {
             this.solucion = this.poblacion[0];
+        document.getElementById('fit').innerHTML += this.fitness(this.poblacion[0]);
+        document.getElementById('gen').innerHTML += generacion;
+        if (this.fitness(this.poblacion[0]) < 48){
+            document.getElementById('fit').style.color = 'red';
+            document.getElementById('gen').style.color = 'red';
+        } else {
+            document.getElementById('fit').style.color = 'green';
+            document.getElementById('gen').style.color = 'green';
         }
-        console.log(`Total de generaciones: ${generacion}`);
+
     }
 
     //ejecuta
