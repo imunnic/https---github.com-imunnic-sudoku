@@ -4,6 +4,7 @@ class SudokuGA {
         this.posicionesCeros = encontrarCeros(this.sudoku);
         this.tamanoPoblacion = parseInt(document.getElementById('maxPopulation').value);
         this.ratioMutacion = 1;
+        this.ratioMutacion = 0.3;
         this.generaciones = parseInt(document.getElementById('maxGenerations').value);;
         this.poblacion = [];
         this.executionTime = 0;
@@ -35,22 +36,22 @@ class SudokuGA {
     fitness(solucion) {
         let fitness = 0;
 
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 9; i++) {
             let row = new Set(solucion[i]);
             fitness += row.size;
         }
 
-        for (let j = 0; j < 4; j++) {
+        for (let j = 0; j < 9; j++) {
             let col = new Set();
-            for (let i = 0; i < 4; i++) {
+            for (let i = 0; i < 9; i++) {
                 col.add(solucion[i][j]);
             }
             fitness += col.size;
         }
 
-        const quadrantSize = 2;
-        for (let x = 0; x < 4; x += quadrantSize) {
-            for (let y = 0; y < 4; y += quadrantSize) {
+        const quadrantSize = 3;
+        for (let x = 0; x < 9; x += quadrantSize) {
+            for (let y = 0; y < 9; y += quadrantSize) {
                 const quadrant = new Set();
                 for (let i = x; i < x + quadrantSize; i++) {
                     for (let j = y; j < y + quadrantSize; j++) {
@@ -82,28 +83,24 @@ class SudokuGA {
     //muta una solución a otra distinta y de mejor fitness o devuelve la solucion inicial
     mutarSolucion(solucion) {
         let solucionMutada = solucion.map((row) => [...row]);
-        let indiceAleatorio = Math.floor(Math.random() * this.posicionesCeros.length);
-        let indiceAleatorio2 = Math.floor(Math.random() * this.posicionesCeros.length);
-        let [fila, columna] = this.posicionesCeros[indiceAleatorio];
-        let [fila2, columna2] = this.posicionesCeros[indiceAleatorio2];
-        let valorActual = solucion[fila][columna];
-        let valorActual2 = solucion[fila2][columna2];
+        let numeroMutaciones = Math.floor(this.posicionesCeros.length * this.ratioMutacion);
 
-        let mutacion, mutacion2;
-        do {
-            mutacion = Math.floor(Math.random() * 4) + 1;
-        } while (mutacion === valorActual);
-        do {
-            mutacion2 = Math.floor(Math.random() * 4) + 1;
-        } while (mutacion2 === valorActual2);
+        for (let i = 0; i < numeroMutaciones; i++) {
+            let indiceAleatorio = Math.floor(Math.random() * this.posicionesCeros.length);
+            let [fila, columna] = this.posicionesCeros[indiceAleatorio];
+            let valorActual = solucion[fila][columna];
 
-        solucionMutada[fila][columna] = mutacion;
-        solucionMutada[fila2][columna2] = mutacion2;
+            let mutacion;
+            do {
+                mutacion = Math.floor(Math.random() * 9) + 1;
+            } while (mutacion === valorActual);
+
+            solucionMutada[fila][columna] = mutacion;
+        }
 
         if (this.fitness(solucionMutada) > this.fitness(solucion)){
             return solucionMutada;
         } else {
-            // console.log('sin mutacion');
             return solucion;
         }
     }
@@ -123,6 +120,7 @@ class SudokuGA {
         let generacion = 0;
         do {
             let hijo = this.combinarSoluciones(this.poblacion[0], this.poblacion[1]);
+            console.log(hijo);
             this.nuevaGeneracion(hijo);
             generacion++;
             this.poblacion.sort((i1, i2) => this.fitness(i2) - this.fitness(i1));
